@@ -11,6 +11,7 @@ const client = new line.Client(config);
 
 exports.noReplyWebhook = (req, res) => {
   console.log('start webhook');
+  console.log(req.body);
 
   Promise.all(req.body.events.map(handleEvent))
   .then((result) => res.json(result))
