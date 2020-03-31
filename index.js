@@ -19,18 +19,17 @@ exports.noReplyWebhook = (req, res) => {
     .update(JSON.stringify(req.body))
     .digest("base64");
 
-  // Compare X-Line-Signature request header and the signature
   if (signature != req.headers["x-line-signature"]) {
     console.log("invalid signature");
     res.status(400).end();
+  } else {
+    Promise.all(req.body.events.map(handleEvent))
+      .then(result => res.json(result))
+      .catch(err => {
+        console.error(err);
+        res.status(500).end();
+      });
   }
-
-  Promise.all(req.body.events.map(handleEvent))
-    .then(result => res.json(result))
-    .catch(err => {
-      console.error(err);
-      res.status(500).end();
-    });
   console.log("end webhook");
 };
 
