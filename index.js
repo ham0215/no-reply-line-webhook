@@ -16,7 +16,7 @@ exports.noReplyWebhook = (req, res) => {
 
   const signature = crypto
     .createHmac("SHA256", config.channelSecret)
-    .update(req.body)
+    .update(JSON.stringify(req.body))
     .digest("base64");
 
   // Compare X-Line-Signature request header and the signature
