@@ -17,8 +17,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm run build
-      - run: cp -p package.json lib/
       - name: deploy to cloud functions
         uses: actions-hub/gcloud@282.0.0
         env:
