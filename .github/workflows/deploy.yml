@@ -1,0 +1,28 @@
+name: deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run build
+      - run: cp -p package.json lib/
+      - name: deploy to cloud functions
+        uses: actions-hub/gcloud@282.0.0
+        env:
+          PROJECT_ID: amiable-bridge-235015
+          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        with:
+          args: functions deploy no-reply-line-webhook --runtime nodejs8 --trigger-http --allow-unauthenticated --entry-point noReplyWebhook --service-account ${{ secrets.SERVICE_ACCOUNT }}
